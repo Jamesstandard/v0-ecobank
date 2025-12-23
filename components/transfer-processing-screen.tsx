@@ -24,7 +24,10 @@ export function TransferProcessingScreen({ onNavigate, transferData }: TransferP
         if (prev >= 100) {
           clearInterval(timer)
           setTimeout(() => {
-            onNavigate("transaction-success", transferData)
+            onNavigate("transaction-success", {
+              ...transferData,
+              beneficiaryName: transferData?.beneficiaryName || "Recipient",
+            })
           }, 500)
           return 100
         }

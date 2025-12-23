@@ -1,12 +1,15 @@
 "use client"
 
-import { useState } from "react"
+import type React from "react"
+
+import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Camera, Edit, Save, X } from "lucide-react"
+import { dataStore } from "@/lib/data-store"
 
 interface ProfileScreenProps {
   onBack: () => void
@@ -14,20 +17,34 @@ interface ProfileScreenProps {
 
 export function ProfileScreen({ onBack }: ProfileScreenProps) {
   const [isEditing, setIsEditing] = useState(false)
-  const [profile, setProfile] = useState({
-    name: "ADEFEMI JOHN OLAYEMI",
-    email: "john.olayemi@email.com",
-    phone: "+234 801 234 5678",
-    accountNumber: "0099348976",
-    bvn: "22123456789",
-    address: "123 Lagos Street, Victoria Island, Lagos",
-    status: "Active",
-    balance: 150000.2,
-  })
-
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [profile, setProfile] = useState(dataStore.getUserData())
   const [editedProfile, setEditedProfile] = useState(profile)
 
+  const handleProfilePictureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const base64String = reader.result as string
+        setEditedProfile({ ...editedProfile, profilePicture: base64String })
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   const handleSave = () => {
+    if (editedProfile.profilePicture !== profile.profilePicture) {
+      dataStore.updateProfilePicture(editedProfile.profilePicture || "")
+    }
+
+    dataStore.updateUserData({
+      name: editedProfile.name,
+      email: editedProfile.email,
+      phone: editedProfile.phone,
+      address: editedProfile.address,
+    })
+
     setProfile(editedProfile)
     setIsEditing(false)
   }
@@ -55,16 +72,34 @@ export function ProfileScreen({ onBack }: ProfileScreenProps) {
         <Card>
           <CardContent className="p-6 text-center">
             <div className="relative inline-block">
-              <div className="w-24 h-24 bg-[#004A9F] rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white text-3xl font-bold">A</span>
-              </div>
+              {editedProfile.profilePicture ? (
+                <img
+                  src={editedProfile.profilePicture || "/placeholder.svg"}
+                  alt="Profile"
+                  className="w-24 h-24 rounded-full object-cover mb-4 mx-auto border-4 border-[#004A9F]"
+                />
+              ) : (
+                <div className="w-24 h-24 bg-[#004A9F] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-white text-3xl font-bold">{profile.name.charAt(0)}</span>
+                </div>
+              )}
               {isEditing && (
-                <Button
-                  size="icon"
-                  className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-[#A4D233] hover:bg-[#8BC220] text-black"
-                >
-                  <Camera className="h-4 w-4" />
-                </Button>
+                <>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleProfilePictureUpload}
+                    className="hidden"
+                  />
+                  <Button
+                    size="icon"
+                    className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-[#A4D233] hover:bg-[#8BC220] text-black"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <Camera className="h-4 w-4" />
+                  </Button>
+                </>
               )}
             </div>
             <div className="font-semibold text-lg">{profile.name}</div>

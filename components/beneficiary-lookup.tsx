@@ -35,7 +35,7 @@ export function BeneficiaryLookup({
     setLookupAttempted(true)
 
     const lookupTimer = setTimeout(() => {
-      const beneficiary = dataStore.findBeneficiaryByAccount(accountNumber)
+      const beneficiary = dataStore.findBeneficiaryByAccount(accountNumber.trim())
 
       if (beneficiary) {
         setFoundName(beneficiary.name)

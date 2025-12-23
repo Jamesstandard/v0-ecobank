@@ -38,6 +38,12 @@ export function LoanRequirementsChecklist({ onBack }: LoanRequirementsChecklistP
       description: "NIN or International Passport verification",
       completed: false,
     },
+    {
+      id: 5,
+      title: "10% Loan Deposit",
+      description: "Initial deposit of 10% of requested loan amount",
+      completed: false,
+    },
   ])
 
   const [timeLeft, setTimeLeft] = useState(48 * 60 * 60) // 48 hours in seconds

@@ -51,7 +51,6 @@ export function EnhancedDashboard({ onNavigate, onMenuToggle }: EnhancedDashboar
   }
 
   const handleQuickAction = (action: string) => {
-    console.log("[v0] Quick action clicked:", action)
     if (action === "more") {
       setShowRecentTransactions(false)
       setIsMoreExpanded(!isMoreExpanded)
@@ -65,7 +64,6 @@ export function EnhancedDashboard({ onNavigate, onMenuToggle }: EnhancedDashboar
   }
 
   const handleAdditionalService = (action: string) => {
-    console.log("[v0] Additional service clicked:", action)
     onNavigate(action)
     setIsMoreExpanded(false)
   }
