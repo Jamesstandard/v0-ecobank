@@ -75,15 +75,19 @@ export function SideMenu({ isOpen, onClose, onNavigate }: SideMenuProps) {
         <div className="bg-white h-full">
           {/* Profile Section */}
           <div className="p-6 border-b">
-            <button
-              onClick={() => {
-                onNavigate("profile")
-                onClose()
-              }}
-              className="w-full text-left hover:opacity-80 transition-opacity"
+            <div
+              className="w-full text-left cursor-pointer hover:opacity-80 transition-opacity"
             >
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center overflow-hidden flex-shrink-0 ring-2 ring-white">
+                <div 
+                  className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center overflow-hidden flex-shrink-0 ring-2 ring-white"
+                  onClick={() => {
+                    onNavigate("profile")
+                    onClose()
+                  }}
+                  role="button"
+                  tabIndex={0}
+                >
                   {profilePicture ? (
                     <img
                       src={profilePicture}
@@ -94,7 +98,15 @@ export function SideMenu({ isOpen, onClose, onNavigate }: SideMenuProps) {
                     <span className="text-white text-xl font-bold">{userData.name.charAt(0).toUpperCase()}</span>
                   )}
                 </div>
-                <div className="flex-1 min-w-0">
+                <div 
+                  className="flex-1 min-w-0 cursor-pointer"
+                  onClick={() => {
+                    onNavigate("profile")
+                    onClose()
+                  }}
+                  role="button"
+                  tabIndex={0}
+                >
                   <h3 className="font-semibold text-lg text-gray-900 truncate">{userData.name.toUpperCase()}</h3>
                   <p className="text-sm text-gray-600 truncate">{userData.email}</p>
                 </div>
@@ -111,7 +123,7 @@ export function SideMenu({ isOpen, onClose, onNavigate }: SideMenuProps) {
                   <Settings className="h-5 w-5" />
                 </Button>
               </div>
-            </button>
+            </div>
           </div>
 
           {/* Menu Items */}
