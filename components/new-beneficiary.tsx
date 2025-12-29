@@ -66,8 +66,14 @@ export function NewBeneficiary({ onBack, onNavigate }: NewBeneficiaryProps) {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleBeneficiaryFound = (name: string) => {
-    setFormData({ ...formData, beneficiaryName: name })
+  const handleBeneficiaryFound = (info: { name: string; bank?: string; accountNumber?: string }) => {
+    setFormData({
+      ...formData,
+      beneficiaryName: info.name,
+      // only set bank/account if not already selected by user
+      bank: formData.bank || info.bank || "",
+      accountNumber: formData.accountNumber || info.accountNumber || formData.accountNumber,
+    })
     setErrors({ ...errors, beneficiaryName: undefined })
   }
 

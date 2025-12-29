@@ -7,7 +7,7 @@ import { dataStore } from "@/lib/data-store"
 
 interface BeneficiaryLookupProps {
   accountNumber: string
-  onBeneficiaryFound: (name: string) => void
+  onBeneficiaryFound: (info: { name: string; bank?: string; accountNumber?: string }) => void
   onAccountNumberChange: (value: string) => void
 }
 
@@ -59,7 +59,7 @@ export function BeneficiaryLookup({
           console.log("[v0] Account number match verified: ", beneficiary.accountNumber === trimmedAccountNumber)
           setFoundName(beneficiary.name)
           setFoundBank(beneficiary.bank)
-          onBeneficiaryFound(beneficiary.name)
+          onBeneficiaryFound({ name: beneficiary.name, bank: beneficiary.bank, accountNumber: beneficiary.accountNumber })
           setError(null)
           setIsLoading(false)
         } else {

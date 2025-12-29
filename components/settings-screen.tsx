@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ShareDetailsModal } from "@/components/share-details-modal"
@@ -23,9 +23,10 @@ import {
   User,
   Wifi,
   HelpCircle,
-  Github,
   FileText,
+  Archive,
 } from "lucide-react"
+import { dataStore } from "@/lib/data-store"
 
 interface SettingsScreenProps {
   onNavigate: (screen: string) => void
@@ -37,6 +38,20 @@ export function SettingsScreen({ onNavigate, onBack }: SettingsScreenProps) {
   const [showNetworkModal, setShowNetworkModal] = useState(false)
   const [showServiceStatus, setShowServiceStatus] = useState(false)
   const [showAddFunds, setShowAddFunds] = useState(false)
+  const [showStorageModal, setShowStorageModal] = useState(false)
+  const [storageContent, setStorageContent] = useState<string>("")
+  const [storageStats, setStorageStats] = useState(() => dataStore.getStorageStats())
+
+  // Subscribe to dataStore changes so UI updates when storage is cleared/modified
+  useEffect(() => {
+    const unsubscribe = dataStore.subscribe(() => {
+      setStorageStats(dataStore.getStorageStats())
+      // update preview if modal open
+      if (showStorageModal) setStorageContent(dataStore.exportData())
+    })
+    return unsubscribe
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showStorageModal])
 
   // Mock user statistics
   const userStats = {
@@ -137,10 +152,10 @@ export function SettingsScreen({ onNavigate, onBack }: SettingsScreenProps) {
       onClick: () => console.log("Support feature coming soon"),
     },
     {
-      icon: Github,
-      label: "GitHub",
-      description: "View source code",
-      onClick: () => window.open("https://github.com/aidigitalcashout-cell/v0-ecobank", "_blank"),
+      icon: Archive,
+      label: "Storage",
+      description: "Manage local app storage",
+      onClick: () => setShowStorageModal(true),
     },
     {
       icon: FileText,
@@ -271,6 +286,69 @@ export function SettingsScreen({ onNavigate, onBack }: SettingsScreenProps) {
       <NetworkChatModal isOpen={showNetworkModal} onClose={() => setShowNetworkModal(false)} />
       <BankServiceStatus isOpen={showServiceStatus} onClose={() => setShowServiceStatus(false)} />
       <AddFundsModal isOpen={showAddFunds} onClose={() => setShowAddFunds(false)} />
+      {showStorageModal && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-start justify-center p-4">
+          <div className="max-w-3xl w-full mt-12 bg-white rounded-2xl shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b">
+              <div className="flex items-center gap-3">
+                <Archive className="h-5 w-5 text-[#004A9F]" />
+                <h3 className="text-lg font-semibold">Storage Manager</h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" onClick={() => setShowStorageModal(false)}>Close</Button>
+              </div>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-sm text-gray-600">Storage Statistics</div>
+                </div>
+                <div className="text-sm text-gray-700 font-medium">
+                  Total beneficiaries: {storageStats.totalBeneficiaries} • Transactions: {storageStats.totalTransactions}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <Button onClick={() => setStorageContent(dataStore.exportData())}>View Content</Button>
+                  <Button
+                    onClick={() => {
+                      const json = dataStore.exportData()
+                      const blob = new Blob([json], { type: "application/json" })
+                      const url = URL.createObjectURL(blob)
+                      const a = document.createElement("a")
+                      a.href = url
+                      a.download = "ecobank-data.json"
+                      a.click()
+                      URL.revokeObjectURL(url)
+                    }}
+                  >
+                    Download JSON
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      // confirm and clear
+                      // eslint-disable-next-line no-restricted-globals
+                      if (confirm("Are you sure you want to clear all local storage and reset app data? This cannot be undone.")) {
+                        dataStore.clearAllData()
+                        setStorageContent(dataStore.exportData())
+                      }
+                    }}
+                  >
+                    Clear Storage
+                  </Button>
+                </div>
+
+                <div>
+                  <div className="text-sm text-gray-600 mb-1">Content Preview</div>
+                  <pre className="max-h-72 overflow-auto p-3 bg-gray-50 border rounded text-xs text-gray-700">{storageContent || "(No content loaded). Click 'View Content' to load."}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

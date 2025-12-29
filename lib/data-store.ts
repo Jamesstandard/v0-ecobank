@@ -310,6 +310,111 @@ class DataStore {
           bank: "Access Bank",
           phone: "+234 829 789 0123",
         },
+        {
+          id: "21",
+          name: "Amina Yusuf",
+          accountNumber: "8112345678",
+          bank: "Union Bank",
+          phone: "+234 830 123 4567",
+        },
+        {
+          id: "22",
+          name: "Bright Okeke",
+          accountNumber: "8223456789",
+          bank: "First Bank",
+          phone: "+234 831 234 5678",
+        },
+        {
+          id: "23",
+          name: "Cynthia Egbuna",
+          accountNumber: "8334567890",
+          bank: "Wema Bank",
+          phone: "+234 832 345 6789",
+        },
+        {
+          id: "24",
+          name: "Daniel Ojo",
+          accountNumber: "8445678901",
+          bank: "Stanbic IBTC",
+          phone: "+234 833 456 7890",
+        },
+        {
+          id: "25",
+          name: "Esther Abiola",
+          accountNumber: "8556789012",
+          bank: "Keystone Bank",
+          phone: "+234 834 567 8901",
+        },
+        {
+          id: "26",
+          name: "Frank Mensah",
+          accountNumber: "8667890123",
+          bank: "First City Monument Bank",
+          phone: "+234 835 678 9012",
+        },
+        {
+          id: "27",
+          name: "Grace Nwankwo",
+          accountNumber: "8778901234",
+          bank: "Polaris Bank",
+          phone: "+234 836 789 0123",
+        },
+        {
+          id: "28",
+          name: "Halima Bello",
+          accountNumber: "8889012345",
+          bank: "Ecobank",
+          phone: "+234 837 890 1234",
+        },
+        {
+          id: "29",
+          name: "Ifeanyi Obi",
+          accountNumber: "8990123456",
+          bank: "Guaranty Trust Bank",
+          phone: "+234 838 901 2345",
+        },
+        {
+          id: "30",
+          name: "Jide Afolayan",
+          accountNumber: "9001234567",
+          bank: "Zenith Bank",
+          phone: "+234 839 012 3456",
+        },
+        {
+          id: "31",
+          name: "Kemi Adegoke",
+          accountNumber: "9112345670",
+          bank: "United Bank for Africa",
+          phone: "+234 840 123 4567",
+        },
+        {
+          id: "32",
+          name: "Lukman Salisu",
+          accountNumber: "9223456781",
+          bank: "FCMB",
+          phone: "+234 841 234 5678",
+        },
+        {
+          id: "33",
+          name: "Mariama Conteh",
+          accountNumber: "9334567892",
+          bank: "Fidelity Bank",
+          phone: "+234 842 345 6789",
+        },
+        {
+          id: "34",
+          name: "Nelson Ade",
+          accountNumber: "9445678903",
+          bank: "Sterling Bank",
+          phone: "+234 843 456 7890",
+        },
+        {
+          id: "35",
+          name: "Oluchi Eze",
+          accountNumber: "9556789014",
+          bank: "Union Bank",
+          phone: "+234 844 567 8901",
+        },
       ],
       notifications: [],
       loanApplications: [],
@@ -370,11 +475,19 @@ class DataStore {
   }
 
   private initializeDefaultData(): void {
-    // Only initialize if no data exists
+    const defaultState = this.getDefaultState()
+
+    // Initialize transactions only if none exist
     if (this.state.transactions.length === 0) {
-      const defaultState = this.getDefaultState()
       this.state.transactions = defaultState.transactions
-      this.state.beneficiaries = defaultState.beneficiaries
+    }
+
+    // Merge default beneficiaries into existing list to ensure defaults are present
+    const existingAccounts = new Set(this.state.beneficiaries.map((b) => b.accountNumber.trim()))
+    for (const ben of defaultState.beneficiaries) {
+      if (!existingAccounts.has(ben.accountNumber.trim())) {
+        this.state.beneficiaries.push(ben)
+      }
     }
   }
 
