@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Loader2, AlertCircle, Check } from "lucide-react"
 import { dataStore } from "@/lib/data-store"
 
@@ -81,12 +82,17 @@ export function BeneficiaryLookup({
 
   return (
     <div className="space-y-3">
-      <label className="text-sm font-medium text-gray-700 block">Account Number</label>
+      <Label htmlFor="accountNumber" className="text-sm font-medium text-gray-700 block">
+        Account Number
+      </Label>
       <div className="relative">
         <Input
-          placeholder="Enter account number (min. 10 digits)"
+          id="accountNumber"
+          inputMode="numeric"
+          maxLength={18}
+          placeholder="Enter account number"
           value={accountNumber}
-          onChange={(e) => onAccountNumberChange(e.target.value)}
+          onChange={(e) => onAccountNumberChange(e.target.value.replace(/\D/g, ""))}
           className="bg-white pr-10 transition-all"
         />
         {isLoading && (
